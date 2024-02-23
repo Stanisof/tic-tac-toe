@@ -18,6 +18,22 @@ const players = {
     },
 }
 
+
+
+/* function Players() {
+
+    let player1 =  {
+        name: "Player1",
+        marker: "X",
+    }
+    let player2 = {
+        name: "Player2",
+        marker:"0",
+    }
+    return {player1, player2}
+}
+ */
+
 const game = {
     currentPlayer: players.player1,
     
@@ -31,18 +47,56 @@ const game = {
     },
     
     checkAvailability(row,column) {
-            if (Gameboard.board[row][column] !== 'X' && Gameboard.board[column][row] !== 'O') return true
+            if (Gameboard.board[row][column] !== 'X' && Gameboard.board[row][column] !== 'O') return true
         },
 
     placeMarker(row,column) {
         if (this.checkAvailability(row, column)) {
         Gameboard.board[row].splice(column,1, this.currentPlayer.marker);
-        game.changeTurn();
-        game.printBoard();
+            switch(this.checkWin()) {
+                case("win"): this.clearBoard();
+                             return `The winner is ${this.currentPlayer.name}`
+                case("draw"): this.clearBoard
+                              return "It's a draw"
+                default: this.changeTurn();
+                };
+        this.printBoard()
         } else {
         return "Please place your Marker in a free field.";  
         }
-    }
+    },
+    
+    checkWin() {
+
+        for(let i = 0; i < Gameboard.board.length; i++) {
+            if(Gameboard.board[i][0] === Gameboard.board[i][1] && Gameboard.board[i][0] === Gameboard.board[i][2] && Gameboard.board[i][2] !== "_")
+            return "win"
+        }
+
+        for(let i = 0; i < Gameboard.board.length; i++) {
+            for(let j = 0; j < Gameboard.board[i].length; j++) {
+                if (Gameboard.board[0][j] === Gameboard.board[1][j] && Gameboard.board[0][j] === Gameboard.board[2][j] && Gameboard.board[2][j] !== "_")
+                return "win"
+            }
+        }
+
+        if(Gameboard.board[0][0] === Gameboard.board[1][1] && Gameboard.board[0][0] === Gameboard.board[2][2] && Gameboard.board[2][2] !== "_")
+        return "win"
+
+        if(Gameboard.board[2][0] === Gameboard.board[1][1] && Gameboard.board[2][0] === Gameboard.board[0][2] && Gameboard.board[2][0] !== "_")
+        return "win"
+
+        
+        if(Gameboard.board[0].every(item => item !== "_") && Gameboard.board[1].every(item => item !== "_") && Gameboard.board[2].every(item => item !== "_")) 
+        return "draw" 
+        
+    },
+
+    clearBoard() {
+        Gameboard.board = [["_","_","_"],
+                           ["_","_","_"],
+                           ["_","_","_"]]
+        }
 }
 
 game.printBoard(); // könnte ins iffe rein, aber dann kann ich die objects nicht mehr erreichen

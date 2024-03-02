@@ -1,12 +1,11 @@
 const Gameboard = {
-    board: [["_","_","_"],
-            ["_","_","_"],
-            ["_","_","_"]],
-    rows: 3,
-    columns: 3,
+    board: [],
+    /* rows: 3,
+    columns: 3, */
 };
 
 const players = {
+
     player1: {
         name: "Player1",
         marker: "X",
@@ -18,98 +17,140 @@ const players = {
     },
 }
 
-
-
-/* function Players() {
-
-    let player1 =  {
-        name: "Player1",
-        marker: "X",
-    }
-    let player2 = {
-        name: "Player2",
-        marker:"0",
-    }
-    return {player1, player2}
-}
- */
-
 const game = {
     currentPlayer: players.player1,
     
     printBoard() {
         console.log(Gameboard.board)
-        console.log(`It's ${this.currentPlayer.name}'s turn.`)},
+        console.log(`It's ${this.currentPlayer.name}'s turn.`)
+    },
+
     
     changeTurn() {
         this.currentPlayer == players.player1 ? this.currentPlayer = players.player2 : this.currentPlayer = players.player1;
         return game.currentPlayer.marker
     },
     
-    checkAvailability(row,column) {
-            if (Gameboard.board[row][column] !== 'X' && Gameboard.board[row][column] !== 'O') return true
-        },
+    checkAvailability(attr) {
+            if (attr !== 'X' && attr !== 'O') return true
+    },
+    
+    checkWin() {
 
+        for(let i = 0; i < Gameboard.board.length; i++) {
+            if(Gameboard.board[i][0].getAttribute('data-index') === Gameboard.board[i][1].getAttribute('data-index')
+            && Gameboard.board[i][0].getAttribute('data-index') === Gameboard.board[i][2].getAttribute('data-index') 
+            && Gameboard.board[i][2].getAttribute('data-index') !== "_")
+            return "win"
+        }
+
+        for(let i = 0; i < Gameboard.board.length; i++) {
+            for(let j = 0; j < Gameboard.board[i].length; j++) {
+                if (Gameboard.board[0][j].getAttribute('data-index') === Gameboard.board[1][j].getAttribute('data-index') 
+                    && Gameboard.board[0][j].getAttribute('data-index') === Gameboard.board[2][j].getAttribute('data-index') 
+                    && Gameboard.board[2][j].getAttribute('data-index') !== "_")
+                return "win"
+            }
+        }
+
+        if(Gameboard.board[0][0].getAttribute('data-index') === Gameboard.board[1][1].getAttribute('data-index') 
+            && Gameboard.board[0][0].getAttribute('data-index') === Gameboard.board[2][2].getAttribute('data-index') 
+            && Gameboard.board[2][2].getAttribute('data-index') !== "_")
+        return "win"
+
+        if(Gameboard.board[2][0].getAttribute('data-index') === Gameboard.board[1][1].getAttribute('data-index') 
+        && Gameboard.board[2][0].getAttribute('data-index') === Gameboard.board[0][2].getAttribute('data-index') 
+        && Gameboard.board[2][0].getAttribute('data-index') !== "_")
+        return "win"
+        
+        if(Gameboard.board[0].every(item => item.getAttribute('data-index') !== "_") 
+            && Gameboard.board[1].every(item => item.getAttribute('data-index') !== "_") 
+            && Gameboard.board[2].every(item => item.getAttribute('data-index') !== "_")) 
+        return "draw" 
+        
+    },
+
+    clearBoard() {
+        Gameboard.board = []
+    },
+
+    //for console game:
     placeMarker(row,column) {
         if (this.checkAvailability(row, column)) {
         Gameboard.board[row].splice(column,1, this.currentPlayer.marker);
             switch(this.checkWin()) {
                 case("win"): this.clearBoard();
                              return `The winner is ${this.currentPlayer.name}`
-                case("draw"): this.clearBoard
+
+                case("draw"): this.clearBoard();
                               return "It's a draw"
+    
                 default: this.changeTurn();
                 };
         this.printBoard()
         } else {
-        return "Please place your Marker in a free field.";  
+        return "Please place your marker in a free field.";  
         }
     },
-    
-    checkWin() {
 
-        for(let i = 0; i < Gameboard.board.length; i++) {
-            if(Gameboard.board[i][0] === Gameboard.board[i][1] && Gameboard.board[i][0] === Gameboard.board[i][2] && Gameboard.board[i][2] !== "_")
-            return "win"
-        }
-
-        for(let i = 0; i < Gameboard.board.length; i++) {
-            for(let j = 0; j < Gameboard.board[i].length; j++) {
-                if (Gameboard.board[0][j] === Gameboard.board[1][j] && Gameboard.board[0][j] === Gameboard.board[2][j] && Gameboard.board[2][j] !== "_")
-                return "win"
-            }
-        }
-
-        if(Gameboard.board[0][0] === Gameboard.board[1][1] && Gameboard.board[0][0] === Gameboard.board[2][2] && Gameboard.board[2][2] !== "_")
-        return "win"
-
-        if(Gameboard.board[2][0] === Gameboard.board[1][1] && Gameboard.board[2][0] === Gameboard.board[0][2] && Gameboard.board[2][0] !== "_")
-        return "win"
-
-        
-        if(Gameboard.board[0].every(item => item !== "_") && Gameboard.board[1].every(item => item !== "_") && Gameboard.board[2].every(item => item !== "_")) 
-        return "draw" 
-        
-    },
-
-    clearBoard() {
-        Gameboard.board = [["_","_","_"],
-                           ["_","_","_"],
-                           ["_","_","_"]]
-        }
 }
 
-game.printBoard(); // könnte ins iffe rein, aber dann kann ich die objects nicht mehr erreichen
+const uiGame = {
 
+    boardUI: document.querySelector('.gameboard'),
+    winAlert: document.querySelector('.win'),
+    turnAlert: document.querySelector('.turn'),
 
+    clearDiv() {
+        while (this.boardUI.firstChild) {
+            this.boardUI.removeChild(this.boardUI.firstChild);
+          }
+    },
 
-    // so isses auch ne method, d.h. das was vor dem Punkt steht wird getargeted/ verändert
-    //wie bekommt die func das token?
-    // wie das board array?
-    // col und row muss man ja geben, aber token muss er bekommen können
-    // => function/method bekommt zwei Koordinaten: row/column. Genau da soll das token plaziert werden
-    // => Es beginnt mit initiierung des Spiels
-    //      -> Spielfeld leer soll schon da sein
-    //      -> Dann wird neues Board geprinted mit gesetztem Token
-    //      -> Ansage: "Player0 is next with Token "0""
+    createFields() {
 
+        for(let i=0; i < 3; i++) {
+            Gameboard.board.push([]);
+
+            for(let j = 0; j < 3; j++) {
+
+                let div = document.createElement('div');
+                div.setAttribute('data-index', '_');
+                this.turnAlert.textContent = `It's ${game.currentPlayer.name}'s turn.`;
+
+                div.addEventListener('click', (marker) => {
+                    marker = game.currentPlayer.marker;
+
+                    if (game.checkAvailability(div.getAttribute('data-index'))) {
+                        div.textContent = marker;
+                        div.setAttribute('data-index', marker);
+
+                            switch(game.checkWin()) {
+                                case("win"): game.clearBoard();
+                                             this.clearDiv();
+                                             this.createFields();
+                                             this.winAlert.textContent = `The winner is ${game.currentPlayer.name}`;
+                                    break
+                                case("draw"): game.clearBoard();
+                                              this.clearDiv();
+                                              this.createFields();
+                                              this.winAlert.textContent = "It's a draw";
+                                    break
+                                default: game.changeTurn();
+                                };
+                        this.turnAlert.textContent = `It's ${game.currentPlayer.name}'s turn.`
+                        } else {
+                        return alert("Please place your marker in a free field.");
+                        }
+                });
+
+                Gameboard.board[i].push(div);
+                this.boardUI.appendChild(div);
+
+            }
+        }
+    },
+}
+
+game.printBoard();
+uiGame.createFields();

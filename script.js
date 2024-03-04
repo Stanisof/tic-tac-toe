@@ -1,7 +1,12 @@
+const nameOne = document.getElementById('nameOne');
+const nameTwo = document.getElementById('nameTwo');
+const editOne = document.getElementById('editOne');
+const editTwo = document.getElementById('editTwo');
+const restartBtn = document.getElementById('restart');
+
+
 const Gameboard = {
     board: [],
-    /* rows: 3,
-    columns: 3, */
 };
 
 const players = {
@@ -17,9 +22,22 @@ const players = {
     },
 }
 
+editOne.addEventListener('click', () => {
+    let newName = prompt('What is your name?');
+    nameOne.textContent = newName;
+    players.player1.name = newName;
+})
+
+editTwo.addEventListener('click', () => {
+    let newName = prompt('What is your name?');
+    nameTwo.textContent = newName;
+    players.player2.name = newName;
+});
+
 const game = {
     currentPlayer: players.player1,
-    
+
+    //for console use:
     printBoard() {
         console.log(Gameboard.board)
         console.log(`It's ${this.currentPlayer.name}'s turn.`)
@@ -126,18 +144,19 @@ const uiGame = {
                         div.setAttribute('data-index', marker);
 
                             switch(game.checkWin()) {
-                                case("win"): game.clearBoard();
+                                case("win"): /* game.clearBoard();
                                              this.clearDiv();
-                                             this.createFields();
+                                             this.createFields(); */
                                              this.winAlert.textContent = `The winner is ${game.currentPlayer.name}`;
                                     break
-                                case("draw"): game.clearBoard();
+                                case("draw"): /* game.clearBoard();
                                               this.clearDiv();
-                                              this.createFields();
+                                              this.createFields(); */
                                               this.winAlert.textContent = "It's a draw";
                                     break
                                 default: game.changeTurn();
                                 };
+
                         this.turnAlert.textContent = `It's ${game.currentPlayer.name}'s turn.`
                         } else {
                         return alert("Please place your marker in a free field.");
@@ -152,5 +171,12 @@ const uiGame = {
     },
 }
 
-game.printBoard();
+restartBtn.addEventListener('click', () => {
+        game.clearBoard();
+        uiGame.clearDiv();
+        uiGame.createFields();
+        uiGame.winAlert.textContent = '';
+})
+
+//game.printBoard(); for console use
 uiGame.createFields();
